@@ -1,40 +1,28 @@
-import React, { useState } from "react";
 import {
-  View,
-  Text,
   Image,
-  TextInput,
-  Button,
   StyleSheet,
-  Dimensions,
+  Text,
+  TextInput,
   TouchableOpacity,
-  StatusBar,
+  View,
 } from "react-native";
-import { login } from "../api/api";
+import React, { useState } from "react";
 import { colors } from "../utils/colors";
 import { fonts } from "../utils/fonts";
+
 import Ionicons from "react-native-vector-icons/Ionicons";
 import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
+import { useNavigation } from "@react-navigation/native";
 
-const LoginScreen = ({ navigation }) => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+const NewLoginScreen = () => {
+  const navigation = useNavigation();
   const [secureEntery, setSecureEntery] = useState(true);
-
-  const handleLogin = async () => {
-    try {
-      const user = await login(email, password, navigation);
-    } catch (error) {
-      console.error(error);
-      alert("Login failed");
-    }
-  };
 
   const handleGoBack = () => {
     navigation.goBack();
   };
   const handleSignup = () => {
-    navigation.navigate("signup");
+    navigation.navigate("SIGNUP");
   };
 
   return (
@@ -47,15 +35,10 @@ const LoginScreen = ({ navigation }) => {
         />
       </TouchableOpacity>
       <View style={styles.textContainer}>
-        {/* <Text style={styles.headingText}>Hey,</Text> */}
-        {/* <Text style={styles.headingText}>Welcome</Text> */}
-        <Text style={styles.headingText}>Please sign In</Text>
-        <Image
-          style={styles.loginImg}
-          source={require("../assets/images/login.png")}
-        />
+        <Text style={styles.headingText}>Hey,</Text>
+        <Text style={styles.headingText}>Welcome</Text>
+        <Text style={styles.headingText}>Back</Text>
       </View>
-
       {/* form  */}
       <View style={styles.formContainer}>
         <View style={styles.inputContainer}>
@@ -65,7 +48,6 @@ const LoginScreen = ({ navigation }) => {
             placeholder="Enter your email"
             placeholderTextColor={colors.secondary}
             keyboardType="email-address"
-            onChangeText={setEmail}
           />
         </View>
         <View style={styles.inputContainer}>
@@ -75,7 +57,6 @@ const LoginScreen = ({ navigation }) => {
             placeholder="Enter your password"
             placeholderTextColor={colors.secondary}
             secureTextEntry={secureEntery}
-            onChangeText={setPassword}
           />
           <TouchableOpacity
             onPress={() => {
@@ -92,19 +73,18 @@ const LoginScreen = ({ navigation }) => {
           style={styles.loginButtonWrapper}
           onPress={() => {
             console.log("hey");
-            handleLogin();
           }}
         >
           <Text style={styles.loginText}>Login</Text>
         </TouchableOpacity>
-        {/* <Text style={styles.continueText}>or continue with</Text>
+        <Text style={styles.continueText}>or continue with</Text>
         <TouchableOpacity style={styles.googleButtonContainer}>
           <Image
-            source={require("../assets/images/google.png")}
+            source={require("../assets/images/Weather_01.png")}
             style={styles.googleImage}
           />
           <Text style={styles.googleText}>Google</Text>
-        </TouchableOpacity> */}
+        </TouchableOpacity>
         <View style={styles.footerContainer}>
           <Text style={styles.accountText}>Don’t have an account?</Text>
           <TouchableOpacity onPress={handleSignup}>
@@ -116,7 +96,7 @@ const LoginScreen = ({ navigation }) => {
   );
 };
 
-const { width, height } = Dimensions.get("window");
+export default NewLoginScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -134,17 +114,15 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   textContainer: {
-    justifyContent: "center",
-    alignItems: "center",
-    marginVertical: 10,
+    marginVertical: 20,
   },
   headingText: {
-    fontSize: 40,
+    fontSize: 32,
     color: colors.primary,
     // fontFamily: fonts.SemiBold,
   },
   formContainer: {
-    marginTop: 10,
+    marginTop: 20,
   },
   inputContainer: {
     borderWidth: 1,
@@ -172,11 +150,6 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     marginTop: 20,
   },
-  loginImg: {
-    width: width,
-    height: height * 0.3,
-  },
-
   loginText: {
     color: colors.white,
     fontSize: 20,
@@ -186,8 +159,7 @@ const styles = StyleSheet.create({
   },
   continueText: {
     textAlign: "center",
-    marginTop: 30,
-    marginBottom: 10,
+    marginVertical: 20,
     fontSize: 14,
     // fontFamily: fonts.Regular,
     color: colors.primary,
@@ -222,9 +194,7 @@ const styles = StyleSheet.create({
     // fontFamily: fonts.Regular,
   },
   signupText: {
-    color: colors.info,
+    color: colors.primary,
     // fontFamily: fonts.Bold,
   },
 });
-
-export default LoginScreen;

@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, Button, StyleSheet } from "react-native";
+import { View, Text, TextInput, Button, StyleSheet, Alert } from "react-native";
 import axios from "axios";
 
-const API_URL = "http://192.168.178.205:3000";
+const API_URL = "http://192.168.115.205:3000";
 
 export const login = async (email, password, navigation) => {
   try {
@@ -14,6 +14,10 @@ export const login = async (email, password, navigation) => {
       .then((res) => {
         // console.log("login successful");
         const user = res.data;
+        Alert.alert(
+          "Success!",
+          `${user.userData.name} has successfully signed in!`
+        );
         navigation.navigate("dashboard", { user });
         // return res.data;
       })
@@ -35,7 +39,8 @@ export const register = async (email, password, name, role, navigation) => {
         role,
       })
       .then((res) => {
-        console.log("register successful");
+        // console.log("register successful");
+        Alert.alert("Success!", `${user.userData.name} created successfully!`);
         console.log(res.data);
         const user = res.data;
         navigation.navigate("dashboard", { user });
