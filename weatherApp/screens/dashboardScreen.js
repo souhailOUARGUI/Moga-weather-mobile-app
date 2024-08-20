@@ -343,7 +343,9 @@ import {
   Text,
   FlatList,
   StyleSheet,
+  Image,
   Alert,
+  Dimensions,
   TouchableOpacity,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
@@ -351,21 +353,26 @@ import { fetchMetars, fetchSynops } from "../api/api";
 import { Card } from "react-native-elements";
 import { LinearGradient } from "expo-linear-gradient";
 import SlidingUpPanel from "rn-sliding-up-panel";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import io from "socket.io-client";
+import { theme } from "../utils/theme";
+
+import { colors } from "../utils/colors";
 
 const API_URL = "http://192.168.115.205:3000";
 
-// Color scheme based on gray tones
-export const colors = {
-  darkGray: "#2E2E2E",
-  mediumGray: "#4F4F4F",
-  lightGray: "#E0E0E0",
-  accentGray: "#A9A9A9",
-  translucentWhite: "rgba(255, 255, 255, 0.6)",
-  translucentDarkGray: "rgba(46, 46, 46, 0.8)",
-};
+// // Color scheme based on gray tones
+// export const colors = {
+//   darkGray: "#2E2E2E",
+//   mediumGray: "#4F4F4F",
+//   lightGray: "#E0E0E0",
+//   accentGray: "#A9A9A9",
+//   translucentWhite: "rgba(255, 255, 255, 0.6)",
+//   translucentDarkGray: "rgba(46, 46, 46, 0.8)",
+// };
 
-const DashboardScreen = ({ route }) => {
+const DashboardScreen = ({ route, navigation }) => {
   const [messages, setMessages] = useState([]);
   const [selectedType, setSelectedType] = useState("Metar");
   const [selectedMessage, setSelectedMessage] = useState(null);
@@ -399,6 +406,10 @@ const DashboardScreen = ({ route }) => {
     };
   }, [selectedType]);
 
+  const handleGoBack = () => {
+    // navigation.goBack();
+    navigation.replace("login");
+  };
   const renderCard = ({ item }) => (
     <TouchableOpacity
       onPress={() => {
@@ -408,7 +419,14 @@ const DashboardScreen = ({ route }) => {
     >
       <Card containerStyle={styles.card}>
         <Text style={styles.messageText}>
-          <Text style={styles.bold}>Message:</Text> {item.message}
+          {/* <Text style={styles.bold}>Message:</Text> */}
+          <MaterialCommunityIcons
+            name="weather-cloudy"
+            size={20}
+            color={colors.black}
+          />
+
+          {"  " + item.message}
         </Text>
         {/* <Text style={styles.messageText}>
           <Text style={styles.bold}>Type:</Text> {item.type}
@@ -417,7 +435,13 @@ const DashboardScreen = ({ route }) => {
           <Text style={styles.bold}>Station:</Text> {item.station}
         </Text> */}
         <Text style={styles.messageText}>
-          <Text style={styles.bold}>Time:</Text>{" "}
+          {/* <Text style={styles.bold}>Time:</Text> */}
+          <MaterialCommunityIcons
+            name="clock-time-three-outline"
+            size={20}
+            color={colors.black}
+          />
+          {"  "}
           {new Date(item.timestamp).toLocaleString()}
         </Text>
       </Card>
@@ -426,13 +450,27 @@ const DashboardScreen = ({ route }) => {
 
   return (
     <View style={styles.container}>
-      <LinearGradient
+      <Image
+        source={require("../assets/images/bg.png")}
+        style={styles.bgImg}
+        blurRadius={70}
+      />
+      <TouchableOpacity style={styles.backButtonWrapper} onPress={handleGoBack}>
+        <Ionicons name={"exit-outline"} color={colors.white} size={25} />
+      </TouchableOpacity>
+      {/* <LinearGradient
         colors={[colors.translucentWhite, colors.translucentDarkGray]}
         style={styles.header}
       >
-        <Text style={styles.title}>Welcome, {user.userData.name}</Text>
-        <Text style={styles.subtitle}>Weather Messages</Text>
-      </LinearGradient>
+        <TouchableOpacity
+          style={styles.backButtonWrapper}
+          onPress={handleGoBack}
+        >
+          <Ionicons name={"exit-outline"} color={colors.primary} size={25} />
+        </TouchableOpacity> */}
+      {/* <Text style={styles.title}>Welcome, {user.userData.name}</Text> */}
+      {/* <Text style={styles.subtitle}>Weather Messages</Text> */}
+      {/* </LinearGradient> */}
 
       <View style={styles.pickerContainer}>
         <Text style={styles.pickerLabel}>Select Type:</Text>
@@ -443,6 +481,7 @@ const DashboardScreen = ({ route }) => {
             onValueChange={(itemValue) => {
               setSelectedType(itemValue);
             }}
+            dropdownIconColor={colors.white}
           >
             <Picker.Item label="Metar" value="Metar" />
             <Picker.Item label="Synop" value="Synop" />
@@ -455,12 +494,11 @@ const DashboardScreen = ({ route }) => {
         keyExtractor={(item) => item._id}
         renderItem={renderCard}
       />
-
       <SlidingUpPanel ref={panelRef} draggableRange={{ top: 400, bottom: 0 }}>
         <View style={styles.panel}>
           {selectedMessage && (
             <>
-              <Text style={styles.panelTitle}>Details</Text>
+              <Text style={styles.panelTitle}>Message Details</Text>
               <Text style={styles.panelText}>
                 <Text style={styles.bold}>Message:</Text>{" "}
                 {selectedMessage.message}
@@ -520,10 +558,17 @@ const DashboardScreen = ({ route }) => {
   );
 };
 
+const { width, height } = Dimensions.get("window");
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.darkGray,
+  },
+  bgImg: {
+    position: "absolute",
+    height: height + 30,
+    width: width,
   },
   header: {
     padding: 20,
@@ -537,6 +582,17 @@ const styles = StyleSheet.create({
     color: colors.darkGray,
     marginBottom: 8,
   },
+  backButtonWrapper: {
+    height: 35,
+    width: 35,
+    backgroundColor: theme.bgWhite(0.4),
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    alignSelf: "flex-end",
+    marginTop: 30,
+    marginRight: 15,
+  },
   subtitle: {
     fontSize: 30,
     color: colors.lightGray,
@@ -548,8 +604,8 @@ const styles = StyleSheet.create({
   },
   pickerLabel: {
     fontSize: 16,
-    marginBottom: 8,
-    color: colors.lightGray,
+    marginBottom: 5,
+    color: colors.white,
   },
   pickerWrapper: {
     width: 200,
@@ -557,47 +613,52 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.accentGray,
     overflow: "hidden",
-    backgroundColor: colors.mediumGray,
+    // backgroundColor: colors.mediumGray,
+    backgroundColor: theme.bgWhite(0.4),
   },
   picker: {
-    color: colors.lightGray,
+    color: colors.white,
+    borderColor: colors.white,
   },
   card: {
-    backgroundColor: colors.mediumGray,
-    borderColor: colors.accentGray,
-    borderWidth: 0,
+    // backgroundColor: colors.mediumGray,
+    backgroundColor: theme.bgWhite(0.4),
+    // borderColor: colors.white,
+    // borderWidth: 1,
     borderRadius: 15,
-    padding: 16,
-    shadowColor: colors.lightGray,
+    // padding: 10,
+    shadowColor: theme.bgWhite(0.0),
     shadowOpacity: 0.4,
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 8,
   },
   messageText: {
     fontSize: 16,
-    marginBottom: 4,
-    color: colors.lightGray,
+    marginVertical: 4,
+    color: colors.white,
+    // backgroundColor: theme.bgWhite(0.4),
   },
   bold: {
     fontWeight: "bold",
-    color: colors.lightGray,
+    color: colors.black,
   },
   panel: {
     flex: 1,
     backgroundColor: colors.darkGray,
-    padding: 20,
+    padding: 10,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
   },
   panelTitle: {
     fontSize: 24,
     marginBottom: 16,
-    color: colors.lightGray,
+    color: colors.black,
+    textAlign: "center",
   },
   panelText: {
     fontSize: 16,
     marginBottom: 8,
-    color: colors.lightGray,
+    color: colors.black,
   },
 });
 

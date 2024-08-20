@@ -10,6 +10,7 @@ import React from "react";
 import { colors } from "../utils/colors";
 import { fonts } from "../utils/fonts";
 import { useNavigation } from "@react-navigation/native";
+import Ionicons from "react-native-vector-icons/Ionicons";
 // import { useFonts } from "expo-font";
 
 const HomeScreen = () => {
@@ -49,18 +50,23 @@ const HomeScreen = () => {
         <TouchableOpacity
           style={[
             styles.loginButtonWrapper,
-            { backgroundColor: colors.primary },
+            // { backgroundColor: colors.primary },
           ]}
           onPress={handleLogin}
         >
-          <Text style={styles.loginButtonText}>Login</Text>
+          <Text style={styles.loginButtonText}>procedez ver l'application</Text>
+          <Ionicons
+            name={"arrow-forward-outline"}
+            color={colors.white}
+            size={15}
+          />
         </TouchableOpacity>
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={[styles.loginButtonWrapper]}
           onPress={handleSignup}
         >
           <Text style={styles.signupButtonText}>Sign-up</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
     </View>
   );
@@ -114,7 +120,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     borderWidth: 2,
     borderColor: colors.gray,
-    width: "80%",
+    width: "60%",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: colors.primary,
     height: 60,
     borderRadius: 100,
   },
