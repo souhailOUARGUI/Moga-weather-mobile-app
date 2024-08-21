@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { View, Text, TextInput, Button, StyleSheet, Alert } from "react-native";
 import axios from "axios";
 
-const API_URL = "http://192.168.166.205:3000";
+const API_URL = "http://192.168.3.81:3000";
 
 export const login = async (email, password, navigation) => {
   try {
@@ -54,13 +54,18 @@ export const register = async (email, password, name, role, navigation) => {
   }
 };
 
-export const fetchMetars = async (setMessages) => {
+export const fetchMetars = async (setMessages, setFilterMessages) => {
   try {
     const response = await axios
       .get(`${API_URL}/messages/metars`)
       .then((res) => {
         // console.log(res.data);
+        // const sortedMsgs = res.data.sort(
+        //   (a, b) => a.date.getTime() - b.date.getTime()
+        // );
         setMessages(res.data);
+        setFilterMessages(res.data);
+
         return res.data;
       });
   } catch (error) {
@@ -68,12 +73,14 @@ export const fetchMetars = async (setMessages) => {
   }
 };
 
-export const fetchSynops = async (setMessages) => {
+export const fetchSynops = async (setMessages, setFilterMessages) => {
   try {
     const response = await axios
       .get(`${API_URL}/messages/synops`)
       .then((res) => {
         setMessages(res.data);
+        setFilterMessages(res.data);
+
         return res.data;
       });
     // return response.data;

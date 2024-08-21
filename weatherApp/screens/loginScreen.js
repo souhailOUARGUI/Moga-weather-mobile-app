@@ -91,7 +91,7 @@ const LoginScreen = ({ navigation }) => {
         <TouchableOpacity
           style={styles.loginButtonWrapper}
           onPress={() => {
-            console.log("hey");
+            // console.log("hey");
             handleLogin();
           }}
         >
