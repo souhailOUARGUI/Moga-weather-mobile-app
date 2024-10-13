@@ -36,7 +36,7 @@ const HomeScreen = () => {
         style={styles.logo}
       />
       <Image
-        source={require("../assets/images/partlycloudy.png")}
+        source={require("../assets/images/Weather_pana.png")}
         style={styles.bannerImage}
       />
 
@@ -54,7 +54,9 @@ const HomeScreen = () => {
           ]}
           onPress={handleLogin}
         >
-          <Text style={styles.loginButtonText}>procedez ver l'application</Text>
+          <Text style={styles.loginButtonText}>
+            procedez vers l'application
+          </Text>
           <Ionicons
             name={"arrow-forward-outline"}
             color={colors.white}
@@ -96,8 +98,8 @@ const styles = StyleSheet.create({
   },
   bannerImage: {
     marginVertical: 10,
-    height: 260,
-    width: 260,
+    height: height * 0.35,
+    width: width * 0.85,
   },
   title: {
     fontSize: 40,

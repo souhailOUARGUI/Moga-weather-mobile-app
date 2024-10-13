@@ -9,12 +9,17 @@ import {
   Dimensions,
   TouchableOpacity,
   StatusBar,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+  Alert,
 } from "react-native";
 import { login } from "../api/api";
 import { colors } from "../utils/colors";
 import { fonts } from "../utils/fonts";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
+import { theme } from "../utils/theme";
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
@@ -26,7 +31,8 @@ const LoginScreen = ({ navigation }) => {
       const user = await login(email, password, navigation);
     } catch (error) {
       console.error(error);
-      alert("Login failed");
+      // alert("Login failed");
+      Alert.alert("login failed");
     }
   };
 
@@ -38,66 +44,83 @@ const LoginScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <TouchableOpacity style={styles.backButtonWrapper} onPress={handleGoBack}>
-        <Ionicons
-          name={"arrow-back-outline"}
-          color={colors.primary}
-          size={25}
-        />
-      </TouchableOpacity>
-      <View style={styles.textContainer}>
-        {/* <Text style={styles.headingText}>Hey,</Text> */}
-        {/* <Text style={styles.headingText}>Welcome</Text> */}
-        <Text style={styles.headingText}>Please sign In</Text>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+    >
+      <ScrollView contentContainerStyle={styles.scrollViewContainer}>
         <Image
-          style={styles.loginImg}
-          source={require("../assets/images/login.png")}
+          source={require("../assets/images/bg.png")}
+          style={styles.bgImg}
+          blurRadius={70}
         />
-      </View>
-
-      {/* form  */}
-      <View style={styles.formContainer}>
-        <View style={styles.inputContainer}>
-          <Ionicons name={"mail-outline"} size={30} color={colors.secondary} />
-          <TextInput
-            style={styles.textInput}
-            placeholder="Enter your email"
-            placeholderTextColor={colors.secondary}
-            keyboardType="email-address"
-            onChangeText={setEmail}
+        <TouchableOpacity
+          style={styles.backButtonWrapper}
+          onPress={handleGoBack}
+        >
+          <Ionicons
+            name={"arrow-back-outline"}
+            color={colors.primary}
+            size={25}
+          />
+        </TouchableOpacity>
+        <View style={styles.textContainer}>
+          {/* <Text style={styles.headingText}>Hey,</Text> */}
+          {/* <Text style={styles.headingText}>Welcome</Text> */}
+          <Text style={styles.headingText}>Please sign In</Text>
+          <Image
+            style={styles.loginImg}
+            source={require("../assets/images/Login_cuate.png")}
           />
         </View>
-        <View style={styles.inputContainer}>
-          <SimpleLineIcons name={"lock"} size={30} color={colors.secondary} />
-          <TextInput
-            style={styles.textInput}
-            placeholder="Enter your password"
-            placeholderTextColor={colors.secondary}
-            secureTextEntry={secureEntery}
-            onChangeText={setPassword}
-          />
+
+        {/* form  */}
+        <View style={styles.formContainer}>
+          <View style={styles.inputContainer}>
+            <Ionicons name={"mail-outline"} size={30} color={colors.white} />
+            <TextInput
+              style={styles.textInput}
+              placeholder="Enter your email"
+              placeholderTextColor={colors.secondary}
+              keyboardType="email-address"
+              onChangeText={setEmail}
+            />
+          </View>
+          <View style={styles.inputContainer}>
+            <SimpleLineIcons name={"lock"} size={30} color={colors.white} />
+            <TextInput
+              style={styles.textInput}
+              placeholder="Enter your password"
+              placeholderTextColor={colors.secondary}
+              secureTextEntry={secureEntery}
+              onChangeText={setPassword}
+            />
+            <TouchableOpacity
+              onPress={() => {
+                setSecureEntery((prev) => !prev);
+              }}
+            >
+              <SimpleLineIcons
+                name={"eye"}
+                size={20}
+                color={colors.secondary}
+              />
+            </TouchableOpacity>
+          </View>
+          <TouchableOpacity>
+            <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+          </TouchableOpacity>
           <TouchableOpacity
+            style={styles.loginButtonWrapper}
             onPress={() => {
-              setSecureEntery((prev) => !prev);
+              // console.log("hey");
+              handleLogin();
             }}
           >
-            <SimpleLineIcons name={"eye"} size={20} color={colors.secondary} />
+            <Text style={styles.loginText}>Login</Text>
           </TouchableOpacity>
-        </View>
-        <TouchableOpacity>
-          <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.loginButtonWrapper}
-          onPress={() => {
-            // console.log("hey");
-            handleLogin();
-          }}
-        >
-          <Text style={styles.loginText}>Login</Text>
-        </TouchableOpacity>
-        {/* <Text style={styles.continueText}>or continue with</Text>
+          {/* <Text style={styles.continueText}>or continue with</Text>
         <TouchableOpacity style={styles.googleButtonContainer}>
           <Image
             source={require("../assets/images/google.png")}
@@ -105,14 +128,15 @@ const LoginScreen = ({ navigation }) => {
           />
           <Text style={styles.googleText}>Google</Text>
         </TouchableOpacity> */}
-        <View style={styles.footerContainer}>
-          <Text style={styles.accountText}>Don’t have an account?</Text>
-          <TouchableOpacity onPress={handleSignup}>
-            <Text style={styles.signupText}>Sign up</Text>
-          </TouchableOpacity>
+          <View style={styles.footerContainer}>
+            <Text style={styles.accountText}>Don’t have an account?</Text>
+            <TouchableOpacity onPress={handleSignup}>
+              <Text style={styles.signupText}>Sign up</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
-    </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -122,7 +146,16 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.white,
+    // padding: 20,
+  },
+  scrollViewContainer: {
+    flexGrow: 1,
     padding: 20,
+  },
+  bgImg: {
+    position: "absolute",
+    height: height + 30,
+    width: width,
   },
   backButtonWrapper: {
     height: 40,
@@ -140,7 +173,8 @@ const styles = StyleSheet.create({
   },
   headingText: {
     fontSize: 40,
-    color: colors.primary,
+    color: colors.white,
+    marginBottom: 5,
     // fontFamily: fonts.SemiBold,
   },
   formContainer: {
@@ -148,9 +182,10 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     borderWidth: 1,
-    borderColor: colors.secondary,
+    borderColor: colors.white,
+    height: 45,
     borderRadius: 100,
-    paddingHorizontal: 20,
+    paddingHorizontal: 15,
     flexDirection: "row",
     alignItems: "center",
     padding: 2,
@@ -159,22 +194,27 @@ const styles = StyleSheet.create({
   textInput: {
     flex: 1,
     paddingHorizontal: 10,
+    color: colors.white,
     // fontFamily: fonts.Light,
   },
   forgotPasswordText: {
     textAlign: "right",
-    color: colors.primary,
+    color: colors.white,
     // fontFamily: fonts.SemiBold,
     marginVertical: 10,
   },
   loginButtonWrapper: {
-    backgroundColor: colors.primary,
+    // backgroundColor: colors.primary,
+    backgroundColor: theme.bgWhite(0.4),
+
+    width: 150,
+    alignSelf: "center",
     borderRadius: 100,
     marginTop: 20,
   },
   loginImg: {
-    width: width,
-    height: height * 0.3,
+    width: width * 0.7,
+    height: height * 0.35,
   },
 
   loginText: {
@@ -218,7 +258,7 @@ const styles = StyleSheet.create({
     gap: 5,
   },
   accountText: {
-    color: colors.primary,
+    color: colors.white,
     // fontFamily: fonts.Regular,
   },
   signupText: {

@@ -14,7 +14,7 @@ import {
   Pressable,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
-import { fetchMetars, fetchSynops } from "../api/api";
+import { fetchMetars, fetchSynops, deleteMsg } from "../api/api";
 import { Card } from "react-native-elements";
 import { LinearGradient } from "expo-linear-gradient";
 import SlidingUpPanel from "rn-sliding-up-panel";
@@ -26,8 +26,9 @@ import { theme } from "../utils/theme";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { SlideUpPanel } from "./components/slideUpPanel";
 import { colors } from "../utils/colors";
+import { TempChart } from "./components/tempChart";
 
-const API_URL = "http://192.168.3.81:3000";
+const API_URL = "https://moga-weather-api.onrender.com";
 
 const DashboardScreen = ({ route, navigation }) => {
   const [messages, setMessages] = useState([]);
@@ -70,6 +71,17 @@ const DashboardScreen = ({ route, navigation }) => {
       console.error(error);
     }
   };
+  useEffect(() => {
+    socket.on("mobile", (data) => {
+      console.log(data);
+      Alert.alert("New Weather Message", data.message);
+      loadMessages();
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
 
   useEffect(() => {
     setMessages(
@@ -82,16 +94,7 @@ const DashboardScreen = ({ route, navigation }) => {
 
   useEffect(() => {
     loadMessages();
-
-    socket.on("mobile", (data) => {
-      console.log(data);
-      Alert.alert("New Weather Message", data.message);
-      loadMessages();
-    });
-
-    return () => {
-      socket.disconnect();
-    };
+    // console.log(user.userData.role);
   }, [selectedType]);
 
   const handleGoBack = () => {
@@ -108,23 +111,59 @@ const DashboardScreen = ({ route, navigation }) => {
       }}
     >
       <Card containerStyle={styles.card}>
-        <Text style={styles.messageText}>
-          <MaterialCommunityIcons
-            name="weather-cloudy"
-            size={20}
-            color={colors.black}
-          />
-          {"  " + item.message}
-        </Text>
-        <Text style={styles.messageText}>
-          <MaterialCommunityIcons
-            name="clock-time-three-outline"
-            size={20}
-            color={colors.black}
-          />
-          {"  "}
-          {new Date(item.timestamp).toLocaleString()}
-        </Text>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "center",
+            marginHorizontal: 10,
+          }}
+        >
+          <Text style={styles.messageText}>
+            <MaterialCommunityIcons
+              name="weather-cloudy"
+              size={20}
+              color={colors.black}
+            />
+            {"  " + item.message}
+          </Text>
+
+          {user.userData.role === "admin" ? (
+            <TouchableOpacity
+              style={{ margin: 5 }}
+              onPress={() => deleteMsg(item._id, loadMessages)}
+            >
+              <MaterialCommunityIcons
+                name="delete"
+                size={20}
+                color={colors.black}
+              />
+            </TouchableOpacity>
+          ) : (
+            <></>
+          )}
+        </View>
+        <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
+          {/* date */}
+          <Text style={styles.messageText}>
+            <MaterialCommunityIcons
+              name="calendar"
+              size={20}
+              color={colors.black}
+            />
+            {"  "}
+            {new Date(item.timestamp).toLocaleString().split(",")[0]}
+          </Text>
+          {/* time */}
+          <Text style={styles.messageText}>
+            <MaterialCommunityIcons
+              name="clock-time-three-outline"
+              size={20}
+              color={colors.black}
+            />
+            {"  "}
+            {new Date(item.timestamp).toLocaleString().split(",")[1]}
+          </Text>
+        </View>
       </Card>
     </TouchableOpacity>
   );
@@ -136,9 +175,27 @@ const DashboardScreen = ({ route, navigation }) => {
         style={styles.bgImg}
         blurRadius={70}
       />
-      <TouchableOpacity style={styles.backButtonWrapper} onPress={handleGoBack}>
-        <Ionicons name={"exit-outline"} color={colors.white} size={25} />
-      </TouchableOpacity>
+      <View style={styles.header}>
+        <Text style={{ fontSize: 25, fontWeight: "700", color: colors.white }}>
+          hello, {user.userData.name}
+        </Text>
+        <TouchableOpacity
+          style={styles.backButtonWrapper}
+          onPress={handleGoBack}
+        >
+          <Ionicons name={"exit-outline"} color={colors.white} size={25} />
+        </TouchableOpacity>
+      </View>
+      {/* <TempChart messages={messages} /> */}
+      {/* {messages.length > 0 ? (
+        <TempChart messages={messages} />
+      ) : (
+        <Text
+          style={{ color: colors.white, textAlign: "center", marginTop: 20 }}
+        >
+          Loading data...
+        </Text>
+      )} */}
       {open && (
         <DateTimePicker
           value={filterDate}
@@ -203,11 +260,12 @@ const styles = StyleSheet.create({
     width: width,
   },
   header: {
-    padding: 20,
-    marginBottom: 16,
-    borderBottomLeftRadius: 30,
-    borderBottomRightRadius: 30,
-    backgroundColor: colors.translucentWhite,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginTop: 40,
+    marginBottom: 15,
+    marginHorizontal: 15,
   },
 
   title: {
@@ -220,11 +278,11 @@ const styles = StyleSheet.create({
     height: 35,
     width: 35,
     backgroundColor: theme.bgWhite(0.4),
-    borderRadius: 20,
+    borderRadius: 10,
     justifyContent: "center",
     alignItems: "center",
     alignSelf: "flex-end",
-    marginTop: 30,
+    // marginTop: 30,
     marginRight: 15,
   },
   subtitle: {
@@ -234,10 +292,10 @@ const styles = StyleSheet.create({
   },
   pickerContainer: {
     flexDirection: "row",
-    marginBottom: 16,
+    marginBottom: 5,
     alignItems: "center",
     justifyContent: "space-around",
-    margin: 20,
+    margin: 5,
   },
   pickerLabel: {
     fontSize: 16,
@@ -280,6 +338,8 @@ const styles = StyleSheet.create({
     // borderColor: colors.white,
     // borderWidth: 1,
     borderRadius: 15,
+    alignItems: "center",
+    justifyContent: "center",
     // padding: 10,
     shadowColor: theme.bgWhite(0.0),
     shadowOpacity: 0.4,
@@ -288,8 +348,9 @@ const styles = StyleSheet.create({
   },
   messageText: {
     fontSize: 16,
-    marginVertical: 4,
+    marginVertical: 2,
     color: colors.white,
+    textAlign: "center",
     // backgroundColor: theme.bgWhite(0.4),
   },
   bold: {
@@ -299,7 +360,7 @@ const styles = StyleSheet.create({
   panel: {
     flex: 1,
     // backgroundColor: colors.darkGray,
-    backgroundColor: theme.bgWhite(0.75),
+    backgroundColor: theme.bgWhite(1),
     padding: 10,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
@@ -314,6 +375,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 8,
     color: colors.black,
+  },
+  viewChart: {
+    backgroundColor: "#212B34",
+    margin: 10,
+    height: 160,
   },
 });
 

@@ -8,11 +8,14 @@ import {
   TouchableOpacity,
   Dimensions,
   StyleSheet,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { register } from "../api/api";
 import { colors } from "../utils/colors";
 import { fonts } from "../utils/fonts";
-
+import { theme } from "../utils/theme";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
 
@@ -40,86 +43,99 @@ const SignupScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <TouchableOpacity style={styles.backButtonWrapper} onPress={handleGoBack}>
-        <Ionicons
-          name={"arrow-back-outline"}
-          color={colors.primary}
-          size={25}
-        />
-      </TouchableOpacity>
-      <View style={styles.textContainer}>
-        <Text style={styles.headingText}>Sign Up</Text>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+    >
+      <ScrollView contentContainerStyle={styles.scrollViewContainer}>
         <Image
-          style={styles.signupImg}
-          source={require("../assets/images/signup2.png")}
+          source={require("../assets/images/bg.png")}
+          style={styles.bgImg}
+          blurRadius={70}
         />
-        {/* <Text style={styles.headingText}></Text> */}
-      </View>
-      {/* form  */}
-      <View style={styles.formContainer}>
-        <View style={styles.inputContainer}>
-          <Ionicons name={"man-outline"} size={30} color={colors.secondary} />
-          <TextInput
-            style={styles.textInput}
-            placeholder="Enter your name"
-            placeholderTextColor={colors.secondary}
-            keyboardType="name-phone-pad"
-            onChangeText={setName}
+        <TouchableOpacity
+          style={styles.backButtonWrapper}
+          onPress={handleGoBack}
+        >
+          <Ionicons
+            name={"arrow-back-outline"}
+            color={colors.primary}
+            size={25}
           />
+        </TouchableOpacity>
+        <View style={styles.textContainer}>
+          <Text style={styles.headingText}>Sign Up</Text>
+          <Image
+            style={styles.signupImg}
+            source={require("../assets/images/Sign_up_cuate.png")}
+          />
+          {/* <Text style={styles.headingText}></Text> */}
         </View>
-        <View style={styles.inputContainer}>
-          <Ionicons name={"mail-outline"} size={30} color={colors.secondary} />
-          <TextInput
-            style={styles.textInput}
-            placeholder="Enter your email"
-            placeholderTextColor={colors.secondary}
-            keyboardType="email-address"
-            onChangeText={setEmail}
-          />
-        </View>
-        <View style={styles.inputContainer}>
-          <SimpleLineIcons name={"lock"} size={30} color={colors.secondary} />
-          <TextInput
-            style={styles.textInput}
-            placeholder="Enter your password"
-            placeholderTextColor={colors.secondary}
-            secureTextEntry={secureEntery}
-            onChangeText={setPassword}
-          />
+        {/* form  */}
+        <View style={styles.formContainer}>
+          <View style={styles.inputContainer}>
+            <Ionicons name={"man-outline"} size={30} color={colors.white} />
+            <TextInput
+              style={styles.textInput}
+              placeholder="Enter your name"
+              placeholderTextColor={colors.secondary}
+              keyboardType="name-phone-pad"
+              onChangeText={setName}
+            />
+          </View>
+          <View style={styles.inputContainer}>
+            <Ionicons name={"mail-outline"} size={30} color={colors.white} />
+            <TextInput
+              style={styles.textInput}
+              placeholder="Enter your email"
+              placeholderTextColor={colors.secondary}
+              keyboardType="email-address"
+              onChangeText={setEmail}
+            />
+          </View>
+          <View style={styles.inputContainer}>
+            <SimpleLineIcons name={"lock"} size={30} color={colors.white} />
+            <TextInput
+              style={styles.textInput}
+              placeholder="Enter your password"
+              placeholderTextColor={colors.secondary}
+              secureTextEntry={secureEntery}
+              onChangeText={setPassword}
+            />
+            <TouchableOpacity
+              onPress={() => {
+                setSecureEntery((prev) => !prev);
+              }}
+            >
+              <SimpleLineIcons
+                name={"eye"}
+                size={20}
+                color={colors.secondary}
+              />
+            </TouchableOpacity>
+          </View>
+          <View style={styles.inputContainer}>
+            <Ionicons name={"id-card-outline"} size={30} color={colors.white} />
+            <TextInput
+              style={styles.textInput}
+              placeholder="Enter your role"
+              placeholderTextColor={colors.secondary}
+              keyboardType="name-phone-pad"
+              onChangeText={setRole}
+            />
+          </View>
+
           <TouchableOpacity
+            style={styles.loginButtonWrapper}
             onPress={() => {
-              setSecureEntery((prev) => !prev);
+              console.log("signup");
+              handleSignup();
             }}
           >
-            <SimpleLineIcons name={"eye"} size={20} color={colors.secondary} />
+            <Text style={styles.loginText}>Sign up</Text>
           </TouchableOpacity>
-        </View>
-        <View style={styles.inputContainer}>
-          <Ionicons
-            name={"id-card-outline"}
-            size={30}
-            color={colors.secondary}
-          />
-          <TextInput
-            style={styles.textInput}
-            placeholder="Enter your role"
-            placeholderTextColor={colors.secondary}
-            keyboardType="name-phone-pad"
-            onChangeText={setRole}
-          />
-        </View>
-
-        <TouchableOpacity
-          style={styles.loginButtonWrapper}
-          onPress={() => {
-            console.log("heli");
-            handleSignup();
-          }}
-        >
-          <Text style={styles.loginText}>Sign up</Text>
-        </TouchableOpacity>
-        {/* <Text style={styles.continueText}>or continue with</Text>
+          {/* <Text style={styles.continueText}>or continue with</Text>
         <TouchableOpacity style={styles.googleButtonContainer}>
           <Image
             source={require("../assets/images/google.png")}
@@ -127,14 +143,15 @@ const SignupScreen = ({ navigation }) => {
           />
           <Text style={styles.googleText}>Google</Text>
         </TouchableOpacity> */}
-        <View style={styles.footerContainer}>
-          <Text style={styles.accountText}>Already have an account!</Text>
-          <TouchableOpacity onPress={handleLogin}>
-            <Text style={styles.signupText}>Login</Text>
-          </TouchableOpacity>
+          <View style={styles.footerContainer}>
+            <Text style={styles.accountText}>Already have an account?</Text>
+            <TouchableOpacity onPress={handleLogin}>
+              <Text style={styles.signupText}>Login</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
-    </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -144,7 +161,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.white,
+  },
+  scrollViewContainer: {
+    flexGrow: 1,
     padding: 20,
+  },
+  bgImg: {
+    position: "absolute",
+    height: height + 30,
+    width: width,
   },
   backButtonWrapper: {
     height: 40,
@@ -165,16 +190,18 @@ const styles = StyleSheet.create({
   headingText: {
     textAlign: "center",
     fontSize: 40,
-    color: colors.primary,
+    color: colors.white,
+    marginBottom: 5,
     // fontFamily: fonts.SemiBold,
   },
   formContainer: {
-    marginTop: 10,
+    marginTop: 2,
   },
   inputContainer: {
     borderWidth: 1,
-    borderColor: colors.secondary,
+    borderColor: colors.white,
     borderRadius: 100,
+    height: 45,
     paddingHorizontal: 20,
     flexDirection: "row",
     alignItems: "center",
@@ -184,17 +211,22 @@ const styles = StyleSheet.create({
   textInput: {
     flex: 1,
     paddingHorizontal: 10,
+    color: colors.white,
+
     // fontFamily: fonts.Light,
   },
   forgotPasswordText: {
     textAlign: "right",
-    color: colors.primary,
+    color: colors.white,
     // fontFamily: fonts.SemiBold,
     marginVertical: 10,
   },
   loginButtonWrapper: {
-    backgroundColor: colors.primary,
+    // backgroundColor: colors.primary,
+    backgroundColor: theme.bgWhite(0.4),
     borderRadius: 100,
+    width: 150,
+    alignSelf: "center",
     marginTop: 20,
   },
   loginText: {
@@ -224,7 +256,7 @@ const styles = StyleSheet.create({
   },
   signupImg: {
     height: height * 0.3,
-    width: width * 0.5,
+    width: width * 0.7,
   },
   googleImage: {
     height: 20,
@@ -242,7 +274,7 @@ const styles = StyleSheet.create({
     gap: 5,
   },
   accountText: {
-    color: colors.primary,
+    color: colors.white,
     // fontFamily: fonts.Regular,
   },
   signupText: {
