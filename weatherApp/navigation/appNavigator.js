@@ -7,6 +7,7 @@ import signupScreen from "../screens/signupScreen";
 import dashboardScreen from "../screens/dashboardScreen";
 import HomeScreen from "../screens/hello";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { TempChart } from "../screens/components/tempChart";
 
 import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
@@ -56,11 +57,10 @@ function TabScreen({ navigation, route }) {
         headerShown: false,
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
-
           if (route.name === "dashboard") {
-            iconName = focused ? "home" : "home-outline"; // Example: Ionicons
+            iconName = focused ? "home" : "home-outline";
           } else if (route.name === "charts") {
-            iconName = focused ? "bar-chart" : "bar-chart-outline"; // Example: Ionicons
+            iconName = focused ? "bar-chart" : "bar-chart-outline";
           }
 
           // Return the appropriate icon component
@@ -80,23 +80,24 @@ function TabScreen({ navigation, route }) {
   );
 }
 
-function TestHomeScreen({ navigation }) {
-  return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Text>Home!</Text>
-      <Button
-        title="Go to Settings"
-        onPress={() => navigation.navigate("Settings")}
-      />
-    </View>
-  );
-}
+// function TestHomeScreen({ navigation }) {
+//   return (
+//     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+//       <Text>Home!</Text>
+//       <Button
+//         title="Go to Settings"
+//         onPress={() => navigation.navigate("Settings")}
+//       />
+//     </View>
+//   );
+// }
 
 function SettingsScreen({ navigation }) {
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Text>Settings!</Text>
-      <Button title="Go to Home" onPress={() => navigation.navigate("Home")} />
+      {/* <Text>Settings!</Text>
+      <Button title="Go to Home" onPress={() => navigation.navigate("Home")} /> */}
+      <TempChart />
     </View>
   );
 }
